@@ -1,7 +1,12 @@
 import os.path
 from typing import Any, Generator
 import inspect
+
+import _tkinter
+import seaborn as sns
 from tqdm import tqdm, trange
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # мультипликативный метод генерации последовательности псевдослучайных чисел
@@ -14,17 +19,17 @@ def rand(a: int, b: int, m: int, x: Any = 0) -> Generator[int, Any, None]:
 # рандомайзер чисел от а до b длиной n с заданием начальной точки мультипликативной генерации x0
 def rand_num(a: Any, b: Any, n: int, x0: Any) -> list:
     a_seed = 22693477
-    #a_seed = 0.1234567 * ((n / 10**4)+10**2)
+    # a_seed = 0.1234567 * ((n / 10**4)+10**2)
     b_mult = 1
     m_mod = 2 ** 12
-    #m_mod = ((n / 10**4)+10**2)
-    #a_seed = 22693477 --
-    #b_mult = 1 --
-    #m_mod = 10**5+1
-    #m_mod = 2**13 --
-    #a_seed = 777
-    #b_mult = 2
-    #m_mod = 2134
+    # m_mod = ((n / 10**4)+10**2)
+    # a_seed = 22693477 --
+    # b_mult = 1 --
+    # m_mod = 10**5+1
+    # m_mod = 2**13 --
+    # a_seed = 777
+    # b_mult = 2
+    # m_mod = 2134
 
     p_list = rand(a_seed, b_mult, m_mod, x0)
 
@@ -54,21 +59,21 @@ def dis(x: list) -> float:
     return (out / len(x) - mat(x) ** 2) * len(x) / (len(x) - 1)
 
 
-#Алгоритм z
+# Алгоритм z
 def compute_z(x: list) -> list:
     n = len(x)
     z = [0] * n
 
     zbox_l, zbox_r, z[0] = 0, 0, n
     for k in range(1, n):
-        if k < zbox_r:              # k is within a zbox
+        if k < zbox_r:  # k is within a zbox
             k = k - zbox_l
             if z[k] < zbox_r - k:
-                z[k] = z[k]         # Full optimization
+                z[k] = z[k]  # Full optimization
                 continue
-            zbox_l = k              # Partial optimization
+            zbox_l = k  # Partial optimization
         else:
-            zbox_l = zbox_r = k     # Match from scratch
+            zbox_l = zbox_r = k  # Match from scratch
         while zbox_r < n and x[zbox_r - zbox_l] == x[zbox_r]:
             zbox_r += 1
         z[k] = zbox_r - zbox_l
@@ -79,8 +84,22 @@ def compute_z(x: list) -> list:
 def period(x: list) -> int:
     z = compute_z(x)
     for k in range(1, len(z)):
-        if (k+z[k] == len(x)) & (len(x) % k == 0):
+        if (k + z[k] == len(x)) & (len(x) % k == 0):
             return k
+
+
+def his_out(x: list):
+    # fig, axs = plt.subplots(1, len(x))
+    for k in range(len(x)):
+        # n = np.array(x[k])
+        sns.displot(x[k], bins=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        #fig = sns_plot.get_figure()
+        # axs[k].hist(n, bins=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    try:
+        plt.show()
+
+    except _tkinter.TclError:
+        pass
 
 
 if __name__ == '__main__':
@@ -96,9 +115,9 @@ if __name__ == '__main__':
     file_path = 'logs/random_numbers'
     if not os.path.exists(file_path):
         os.makedirs(file_path)
-    for i in trange(5):
+    for i in trange(4):
         ffile = open(f'{file_path}/log_{i + 1}.txt', 'w')
-        out_m.append(rand_num(0, 10, 10 ** (4 + i), 1))
+        out_m.append(rand_num(0, 10, 10 ** (2 + i), 1))
         f_ns = out_m[i]
         ffile.write('--------------------\n'
                     f'Output_Number_{i + 1}\n'
@@ -111,7 +130,7 @@ if __name__ == '__main__':
           "Задание 3:\n"
           "Математическое ожидание и дисперсия полученных последовательностей.\n"
           "--------------------------------------------------------------------------")
-    for i in range(5):
+    for i in range(4):
         mato_exp = mat(out_m[i])
         disp_exp = dis(out_m[i])
         mato_t = 5
@@ -126,5 +145,6 @@ if __name__ == '__main__':
           "Период сгенерированных последовательностей:")
     print(out_m[0])
     print(period(out_m[0]))
-    for i in range(5):
-        print(f"Период {i+1}-й последовательности p_{i+1} = {period(out_m[i])}")
+    for i in range(4):
+        print(f"Период {i + 1}-й последовательности p_{i + 1} = {period(out_m[i])}")
+    his_out(out_m)
