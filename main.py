@@ -13,17 +13,17 @@ def rand(a: int, b: int, m: int, x: Any = 0) -> Generator[int, Any, None]:
 
 # рандомайзер чисел от а до b длиной n с заданием начальной точки мультипликативной генерации x0
 def rand_num(a: Any, b: Any, n: int, x0: Any) -> list:
-    #a_seed = 22693477
+    a_seed = 22693477
     #a_seed = 0.1234567 * ((n / 10**4)+10**2)
-    #b_mult = 1
+    b_mult = 1
     m_mod = 2 ** 12
     #m_mod = ((n / 10**4)+10**2)
     #a_seed = 22693477 --
     #b_mult = 1 --
     #m_mod = 10**5+1
     #m_mod = 2**13 --
-    a_seed = 777
-    b_mult = 2
+    #a_seed = 777
+    #b_mult = 2
     #m_mod = 2134
 
     p_list = rand(a_seed, b_mult, m_mod, x0)
